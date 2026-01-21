@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>OMOK TODO</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Yeon+Sung&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Yeon Sung", cursive;
+    }
+
+    body {
+      height: 100vh;
+      background: #c9ddeb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+
+    .todo-card {
+      width: 360px;
+      height: 600px;
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative; 
+      overflow: hidden;
+    }
+    .todo-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+
+        background-image: url("오목눈이.png");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+
+        opacity: 0.4;
+        z-index: 0;
+    }
+    .todo-card > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    
+    .title {
+      color: #b7cad8;
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 12px;
+      letter-spacing: 4px;
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(0,0,0,0.2);
+      margin-bottom: 16px;
+    }
+
+    .todo-list {
+      
+      flex: 1;
+      overflow-y: auto;
+      
+    }
+
+    .todo-item {
+      background: #b7cad8;
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .todo-item.completed {
+      opacity: 0.5;
+      text-decoration: line-through;
+    }
+
+    .todo-item input[type="checkbox"] {
+      background: #b7cad8;
+      width: 18px;
+      height: 18px;
+    }
+
+    .todo-text {
+      background: #b7cad8;
+      flex: 1;
+      font-size: 16px;
+      color: white;
+    }
+
+    .delete-btn {
+      background: #b7cad8;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: white;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .input-area input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .input-area button {
+      background: #b7cad8;
+      border: none;
+      border-radius: 10px;
+      padding: 0 14px;
+      cursor: pointer;
+      font-size: 14px;
+      color: white;
+    }
+    
+
+    .clear-all {
+      margin-top: 10px;
+      background: #b7cad8;
+      border: none;
+      border-radius: 10px;
+      padding: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      color: white;
+      letter-spacing: 3px;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="todo-card">
+        <div class="title">TO DO LIST</div>
+        <div class="divider"></div>
+
+        <div id="todoList" class="todo-list"></div>
+
+        <div class="input-area">
+        <input id="todoInput" type="text" placeholder="할 일을 입력하세요..." />
+        <button id="addBtn">추가</button>
+        </div>
+
+        <button id="clearBtn" class="clear-all">전체 삭제</button>
+    </div>
+  </div>
+
+  <script>
+    const todoInput = document.getElementById("todoInput");
+    const addBtn = document.getElementById("addBtn");
+    const todoList = document.getElementById("todoList");
+    const clearBtn = document.getElementById("clearBtn");
+
+    function addTodo() {
+      const text = todoInput.value.trim();
+      if (text === "") return;
+
+      const item = document.createElement("div");
+      item.className = "todo-item";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+
+      const span = document.createElement("span");
+      span.className = "todo-text";
+      span.textContent = text;
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "delete-btn";
+      delBtn.textContent = "✕";
+
+      checkbox.addEventListener("change", () => {
+        item.classList.toggle("completed");
+      });
+
+      delBtn.addEventListener("click", () => {
+        item.remove();
+      });
+
+      
+      item.appendChild(span);
+      item.appendChild(delBtn);
+      todoList.appendChild(item);
+
+      todoInput.value = "";
+    }
+
+    addBtn.addEventListener("click", addTodo);
+
+    todoInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        addTodo();
+      }
+    });
+
+    clearBtn.addEventListener("click", () => {
+      todoList.innerHTML = "";
+    });
+  </script>
+
+</body>
+</html>
