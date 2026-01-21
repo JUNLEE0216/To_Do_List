@@ -85,7 +85,8 @@
     }
 
     .todo-item.completed {
-      opacity: 0.5;
+      opacity: 0.3;
+      background: #b7cad8;
       text-decoration: line-through;
     }
 
@@ -154,7 +155,7 @@
 <body>
   <div class="page">
     <div class="todo-card">
-        <div class="title">TO DO LIST</div>
+        <div class="title">To  Do  List</div>
         <div class="divider"></div>
 
         <div id="todoList" class="todo-list"></div>
@@ -174,15 +175,27 @@
     const todoList = document.getElementById("todoList");
     const clearBtn = document.getElementById("clearBtn");
 
-    function addTodo() {
-      const text = todoInput.value.trim();
-      if (text === "") return;
+    function saveTodos() {
+      const todos = [];
 
+      document.querySelectorAll(".todo-item").forEach(item => {
+        todos.push({
+          text: item.querySelector(".todo-text").textContent,
+          completed: item.classList.contains("completed")
+        });
+      });
+
+      localStorage.setItem("todos", JSON.stringify(todos));
+    }
+
+    function createTodo(text, completed = false) {
       const item = document.createElement("div");
       item.className = "todo-item";
+      if (completed) item.classList.add("completed");
 
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
+      checkbox.checked = completed;
 
       const span = document.createElement("span");
       span.className = "todo-text";
@@ -194,18 +207,39 @@
 
       checkbox.addEventListener("change", () => {
         item.classList.toggle("completed");
+        saveTodos();
       });
 
       delBtn.addEventListener("click", () => {
         item.remove();
+        saveTodos();
       });
 
-      
+      item.appendChild(checkbox);
       item.appendChild(span);
       item.appendChild(delBtn);
+
       todoList.appendChild(item);
+    }
+
+    function addTodo() {
+      const text = todoInput.value.trim();
+      if (text === "") return;
+
+      createTodo(text);
+      saveTodos();
 
       todoInput.value = "";
+    }
+
+    function loadTodos() {
+      const saved = localStorage.getItem("todos");
+      if (!saved) return;
+
+      const todos = JSON.parse(saved);
+      todos.forEach(todo => {
+        createTodo(todo.text, todo.completed);
+      });
     }
 
     addBtn.addEventListener("click", addTodo);
@@ -218,7 +252,9 @@
 
     clearBtn.addEventListener("click", () => {
       todoList.innerHTML = "";
+      localStorage.removeItem("todos");
     });
+  loadTodos();
   </script>
 
 </body>
